@@ -101,6 +101,19 @@ class MoltenBottomNavigationBar extends StatelessWidget {
       assert(domeCircleSize <= (barHeight + domeHeight),
           'domeCircleSize must be less than or equal to (barHeight + domeHeight)');
       final selectedTab = tabs[selectedIndex];
+      double paddingLeft = 0;
+      if (selectedIndex + 1 == ((tabs.length) / 2).ceil() &&
+          tabs.length % 2 != 0) {
+        paddingLeft = 0;
+      } else if (selectedIndex == 0) {
+        paddingLeft = 16;
+      } else if (selectedIndex == tabs.length - 1) {
+        paddingLeft = -16;
+      } else if (selectedIndex < (tabs.length) / 2) {
+        paddingLeft = 8;
+      } else {
+        paddingLeft = -8;
+      }
       return Container(
         height: barHeight + domeHeight,
         margin: margin,
@@ -123,6 +136,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
             // border for the dome
             _animatedPositionedDome(
               top: 0,
+              paddingLeft: paddingLeft,
               tabWidth: _tabWidth,
               domeWidth: _domeWidth - _borderRaduis.topRight.x,
               domeHeight: domeHeight,
@@ -132,6 +146,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
             // Actual dome
             _animatedPositionedDome(
               top: borderSize < 1 ? 1 : (borderSize + 0.2),
+              paddingLeft: paddingLeft,
               tabWidth: _tabWidth,
               domeWidth: _domeWidth - borderSize - _borderRaduis.topRight.x,
               domeHeight: domeHeight,
@@ -142,7 +157,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
               bottom: selectedTab.title == null ? 0 : 16,
               curve: curve,
               duration: duration ?? Duration(milliseconds: 150),
-              left: _tabWidth * selectedIndex,
+              left: _tabWidth * selectedIndex + paddingLeft,
               width: _normalizeDomeOnEdge(_tabWidth, selectedIndex),
               child: Center(
                 child: Container(
@@ -158,12 +173,27 @@ class MoltenBottomNavigationBar extends StatelessWidget {
               final index = entry.key;
               final isSelected = index == selectedIndex;
               final title = entry.value.title;
+              double paddingLeft = 0;
+              if (index + 1 == ((tabs.length) / 2).ceil() &&
+                  tabs.length % 2 != 0) {
+                paddingLeft = 0;
+              } else if (index == 0) {
+                paddingLeft = 16;
+              } else if (index == tabs.length - 1) {
+                paddingLeft = -16;
+              } else if (index + 1 < (tabs.length) / 2) {
+                paddingLeft = 8;
+              } else {
+                paddingLeft = -8;
+              }
+              print(
+                  'DODOODOOD index $index - $paddingLeft - ${tabs.length / 2}');
               return AnimatedPositioned(
                 curve: curve,
                 duration: duration ?? Duration(milliseconds: 150),
                 top: isSelected ? 0 : domeHeight,
                 bottom: 0,
-                left: _tabWidth * index,
+                left: _tabWidth * index + paddingLeft,
                 width: _normalizeDomeOnEdge(_tabWidth, index),
                 child: Column(
                   children: [
@@ -189,6 +219,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
 
   Widget _animatedPositionedDome({
     required double top,
+    required double paddingLeft,
     required double domeWidth,
     required double domeHeight,
     required Color domeColor,
@@ -198,7 +229,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
       curve: curve,
       duration: duration ?? Duration(milliseconds: 150),
       top: top,
-      left: tabWidth * selectedIndex,
+      left: tabWidth * selectedIndex + paddingLeft,
       child: AnimatedContainer(
         duration: duration ?? Duration(milliseconds: 150),
         width: _normalizeDomeOnEdge(tabWidth, selectedIndex),
@@ -232,12 +263,14 @@ class _MoltenTabWrapper extends StatelessWidget {
   final bool isSelected;
   final Function onTab;
   final double circleSize;
+
   _MoltenTabWrapper({
     required this.tab,
     required this.isSelected,
     required this.onTab,
     required this.circleSize,
   });
+
   @override
   Widget build(BuildContext context) {
     return IconTheme(
@@ -296,6 +329,7 @@ class _MoltenDome extends StatelessWidget {
   final Color color;
   final double height;
   final double width;
+
   _MoltenDome({
     required this.color,
     required this.height,
@@ -317,6 +351,7 @@ class _MoltenDome extends StatelessWidget {
 
 class _DomePainter extends CustomPainter {
   final Color color;
+
   _DomePainter({
     required this.color,
   });
