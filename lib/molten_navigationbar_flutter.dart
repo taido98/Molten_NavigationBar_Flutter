@@ -50,6 +50,8 @@ class MoltenBottomNavigationBar extends StatelessWidget {
   /// Applied to all border sides
   final Color? borderColor;
 
+  final List<BoxShadow>? boxShadow;
+
   /// How much each angle is curved.
   /// Default is: (topLeft: Radius.circular(10), topRight: Radius.circular(10))
   ///
@@ -78,6 +80,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
     this.borderColor,
     this.borderSize = 0,
     this.borderRaduis,
+    this.boxShadow,
   }) : super(key: key);
 
   @override
@@ -131,6 +134,7 @@ class MoltenBottomNavigationBar extends StatelessWidget {
                       ? _barColor
                       : borderColor!,
                 ),
+                boxShadow: boxShadow,
               ),
             ),
             // border for the dome
@@ -181,13 +185,11 @@ class MoltenBottomNavigationBar extends StatelessWidget {
                 paddingLeft = 16;
               } else if (index == tabs.length - 1) {
                 paddingLeft = -16;
-              } else if (index + 1 < (tabs.length) / 2) {
+              } else if (index < (tabs.length) / 2) {
                 paddingLeft = 8;
               } else {
                 paddingLeft = -8;
               }
-              print(
-                  'DODOODOOD index $index - $paddingLeft - ${tabs.length / 2}');
               return AnimatedPositioned(
                 curve: curve,
                 duration: duration ?? Duration(milliseconds: 150),
@@ -197,16 +199,18 @@ class MoltenBottomNavigationBar extends StatelessWidget {
                 width: _normalizeDomeOnEdge(_tabWidth, index),
                 child: Column(
                   children: [
+                    if (selectedIndex == index) const SizedBox(height: 4),
                     Expanded(
+                        child: Center(
                       child: _MoltenTabWrapper(
                         tab: entry.value,
                         onTab: () => onTabChange(index),
                         isSelected: isSelected,
                         circleSize: domeCircleSize,
                       ),
-                    ),
-                    // const SizedBox(height: 8),
+                    )),
                     if (isSelected && title != null) title,
+                    if (selectedIndex == index) const SizedBox(height: 2),
                   ],
                 ),
               );
